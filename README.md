@@ -6,6 +6,10 @@ Built to demonstrate hands-on **SOC analyst** skills: log collection, normalizat
 
 > Runs on real Windows Security Event Log data. Zero runtime dependencies — pure Node.js + PowerShell.
 
+![Argus SIEM dashboard detecting a simulated brute-force attack mapped to MITRE T1110](docs/dashboard.png)
+
+> *Argus catching a brute-force attack in real time — failed logons spiking, a HIGH-severity alert mapped to **MITRE T1110**, and live ATT&CK coverage. Validate it yourself with [`simulate-attack.ps1`](simulate-attack.ps1).*
+
 ---
 
 ## What it does
