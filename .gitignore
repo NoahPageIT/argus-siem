@@ -1,0 +1,4 @@
+# Your real Security log data stays private — never publish it
+data/
+*.log
+node_modules/

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Argus SIEM</title>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0f0d;--surface:#11181a;--surface2:#16201f;--border:#1e2a28;--border2:#2c3d3a;
+  --text:#d5e3df;--text2:#9fb3ad;--muted:#647772;
+  --teal:#2dd4bf;--amber:#fbbf24;--red:#f87171;--orange:#fb923c;--green:#34d399;--purple:#a78bfa;
+  --mono:'JetBrains Mono',Consolas,monospace;--hud:'Chakra Petch','Segoe UI',sans-serif;
+}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;
+  min-height:100vh;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(900px 380px at 70% -8%,rgba(45,212,191,.07),transparent 70%),
+    linear-gradient(rgba(45,212,191,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(45,212,191,.02) 1px,transparent 1px);
+  background-size:100% 100%,34px 34px,34px 34px}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:#243634;border-radius:4px}
+.wrap{max-width:1320px;margin:0 auto;padding:20px 24px 60px}
+/* topbar */
+.top{display:flex;align-items:center;gap:14px;padding:14px 0 18px;border-bottom:1px solid var(--border2);margin-bottom:22px}
+.logo{width:40px;height:40px;border-radius:7px;background:linear-gradient(135deg,var(--teal),#0ea5a4);
+  display:flex;align-items:center;justify-content:center;font-size:21px;box-shadow:0 0 16px rgba(45,212,191,.45)}
+.title{font-family:var(--hud);font-weight:700;font-size:21px;letter-spacing:1px;text-transform:uppercase}
+.subtitle{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.5px}
+.top-right{margin-left:auto;text-align:right;font-family:var(--mono)}
+.clock{font-size:15px;color:var(--teal);text-shadow:0 0 8px rgba(45,212,191,.4);letter-spacing:1px}
+.updated{font-size:10px;color:var(--muted)}
+/* stat cards */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px}
+.stat{background:linear-gradient(180deg,var(--surface),#0e1514);border:1px solid var(--border);border-radius:6px;
+  padding:15px 16px;position:relative;overflow:hidden}
+.stat::after{content:'';position:absolute;top:7px;left:7px;width:11px;height:11px;
+  border-top:2px solid var(--accent,var(--teal));border-left:2px solid var(--accent,var(--teal));opacity:.5}
+.stat .l{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+.stat .v{font-family:var(--hud);font-size:30px;font-weight:700;line-height:1.1;margin-top:5px}
+.stat .s{font-size:11px;color:var(--muted);margin-top:2px}
+/* grid */
+.cols{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;margin-bottom:18px}
+.card{background:linear-gradient(180deg,var(--surface),#0e1514);border:1px solid var(--border);border-radius:6px;
+  padding:16px 18px;position:relative}
+.card::before{content:'';position:absolute;top:0;left:12px;right:12px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(45,212,191,.35),transparent)}
+.card h2{font-family:var(--mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;
+  color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card h2 .n{margin-left:auto;color:var(--teal)}
+/* alerts */
+.alert{border-left:3px solid var(--border2);background:var(--surface2);border-radius:5px;padding:11px 13px;margin-bottom:9px}
+.alert .ah{display:flex;align-items:center;gap:9px;margin-bottom:4px;flex-wrap:wrap}
+.sev{font-family:var(--mono);font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  padding:2px 7px;border-radius:3px}
+.att{font-family:var(--mono);font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:3px;
+  color:var(--purple);border:1px solid rgba(167,139,250,.4);background:rgba(167,139,250,.1)}
+.alert .at{font-size:13.5px;font-weight:600;flex:1;min-width:200px}
+.alert .ad{font-size:12px;color:var(--text2);margin-top:2px}
+.alert .am{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:5px}
+.empty{text-align:center;color:var(--muted);padding:26px 0;font-size:13px}
+.empty .big{font-size:30px;margin-bottom:8px}
+/* mitre */
+.mitre-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--border)}
+.mitre-row:first-child{border-top:none}
+.mitre-id{font-family:var(--mono);font-weight:700;font-size:12px;color:var(--purple);min-width:74px}
+.mitre-name{flex:1;font-size:12.5px}
+.mitre-tactic{font-family:var(--mono);font-size:10px;color:var(--muted)}
+.mitre-cnt{font-family:var(--hud);font-weight:700;color:var(--amber)}
+/* volume bars */
+.vol{display:flex;align-items:flex-end;gap:3px;height:90px;margin-top:6px}
+.bar{flex:1;background:linear-gradient(180deg,var(--teal),rgba(45,212,191,.25));border-radius:2px 2px 0 0;min-height:2px;
+  position:relative;transition:height .3s}
+.bar:hover{background:var(--amber)}
+.vol-x{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:5px}
+/* event types + table */
+.bottom{display:grid;grid-template-columns:1fr 1.6fr;gap:18px}
+.etype{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:12.5px}
+.etype .dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.etype .en{flex:1}
+.etype .ec{font-family:var(--mono);font-weight:700;color:var(--text2)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);
+  text-align:left;padding:6px 8px;border-bottom:1px solid var(--border2)}
+td{padding:6px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:11px;color:var(--text2)}
+tr:hover td{background:var(--surface2)}
+.eid{font-weight:700;padding:1px 6px;border-radius:3px;font-size:10px}
+@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}.cols,.bottom{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="logo">🛡</div>
+    <div>
+      <div class="title">Argus SIEM</div>
+      <div class="subtitle">Windows Security Monitoring · MITRE ATT&CK</div>
+    </div>
+    <div class="top-right">
+      <div class="clock" id="clock">--:--:--</div>
+      <div class="updated" id="updated">loading…</div>
+    </div>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="cols">
+    <div class="card">
+      <h2>⚠ Active Alerts <span class="n" id="alert-n">0</span></h2>
+      <div id="alerts"></div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:18px">
+        <h2>◈ MITRE ATT&CK Coverage</h2>
+        <div id="mitre"></div>
+      </div>
+      <div class="card">
+        <h2>▦ Event Volume · 24h</h2>
+        <div class="vol" id="vol"></div>
+        <div class="vol-x" id="vol-x"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="card">
+      <h2>▣ Event Types</h2>
+      <div id="etypes"></div>
+    </div>
+    <div class="card">
+      <h2>≣ Recent Events <span class="n" id="ev-n"></span></h2>
+      <div style="max-height:340px;overflow-y:auto">
+        <table><thead><tr><th>Time</th><th>ID</th><th>Event</th><th>Account</th><th>Source</th></tr></thead>
+        <tbody id="events"></tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const SEVC={critical:'var(--red)',high:'var(--orange)',medium:'var(--amber)',low:'var(--teal)',info:'var(--muted)'};
+const EIDC={4625:'var(--red)',4624:'var(--green)',4672:'var(--purple)',4720:'var(--amber)',4740:'var(--orange)',1102:'var(--red)',4688:'var(--teal)'};
+const esc=s=>(s==null?'':String(s)).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const ago=t=>{const s=(Date.now()-new Date(t))/1000;if(s<60)return Math.floor(s)+'s ago';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago';};
+
+function renderStats(s){
+  const cards=[
+    {l:'Total Events',v:s.totalEvents.toLocaleString(),s:s.firstSeen?'since '+new Date(s.firstSeen).toLocaleDateString():'',c:'var(--teal)'},
+    {l:'Failed Logons',v:s.failedLogons.toLocaleString(),s:'event 4625',c:s.failedLogons>0?'var(--red)':'var(--text)'},
+    {l:'Successful Logons',v:s.successLogons.toLocaleString(),s:'event 4624',c:'var(--green)'},
+    {l:'Unique Source IPs',v:s.uniqueSourceIps,s:'external origins',c:'var(--text)'},
+    {l:'Active Alerts',v:s.alertCount,s:s.rulesActive+' rules armed',c:s.alertCount>0?'var(--amber)':'var(--green)'},
+  ];
+  $('#stats').innerHTML=cards.map(c=>`<div class="stat" style="--accent:${c.c}"><div class="l">${c.l}</div><div class="v" style="color:${c.c}">${c.v}</div><div class="s">${c.s}</div></div>`).join('');
+  // volume
+  const max=Math.max(1,...s.hourly.map(h=>h.count));
+  $('#vol').innerHTML=s.hourly.map(h=>`<div class="bar" style="height:${Math.round(h.count/max*100)}%" title="${h.count} events @ ${h.hour}:00"></div>`).join('');
+  $('#vol-x').innerHTML=`<span>${s.hourly[0].hour}:00</span><span>now</span>`;
+  // event types
+  $('#etypes').innerHTML=s.byEventId.slice(0,9).map(e=>`<div class="etype"><span class="dot" style="background:${EIDC[e.id]||'var(--muted)'}"></span><span class="en">${esc(e.name)} <span style="color:var(--muted);font-family:var(--mono);font-size:10px">${e.id}</span></span><span class="ec">${e.count.toLocaleString()}</span></div>`).join('');
+  // mitre
+  $('#mitre').innerHTML=s.mitre.length?s.mitre.map(m=>`<div class="mitre-row"><span class="mitre-id">${m.id}</span><span class="mitre-name">${esc(m.name)}<div class="mitre-tactic">${esc(m.tactic)}</div></span><span class="mitre-cnt">${m.count}</span></div>`).join(''):'<div class="empty" style="padding:14px 0">No techniques triggered yet</div>';
+}
+function renderAlerts(a){
+  $('#alert-n').textContent=a.length;
+  if(!a.length){$('#alerts').innerHTML='<div class="empty"><div class="big">✓</div>No active alerts — all clear</div>';return;}
+  $('#alerts').innerHTML=a.map(x=>`<div class="alert" style="border-left-color:${SEVC[x.severity]}">
+    <div class="ah">
+      <span class="sev" style="color:${SEVC[x.severity]};background:${SEVC[x.severity]}1e;border:1px solid ${SEVC[x.severity]}55">${x.severity}</span>
+      <span class="att">${x.mitre.id}</span>
+      <span class="at">${esc(x.title)}</span>
+    </div>
+    <div class="ad">${esc(x.detail)}</div>
+    <div class="am">${esc(x.mitre.name)} · ${esc(x.mitre.tactic)} · ${ago(x.ts)} · ${x.events.length} event(s)</div>
+  </div>`).join('');
+}
+function renderEvents(ev){
+  $('#ev-n').textContent=ev.length;
+  $('#events').innerHTML=ev.slice(0,150).map(e=>`<tr>
+    <td>${new Date(e.ts).toLocaleTimeString()}</td>
+    <td><span class="eid" style="color:${EIDC[e.eventId]||'var(--muted)'};background:${(EIDC[e.eventId]||'var(--muted)')}1e">${e.eventId}</span></td>
+    <td>${esc(e.eventName)}</td>
+    <td>${esc(e.user||e.subject||'—')}</td>
+    <td>${esc(e.sourceIp&&e.sourceIp!=='-'?e.sourceIp:(e.process?e.process.split('\\').pop():'—'))}</td>
+  </tr>`).join('');
+}
+async function refresh(){
+  try{
+    const [stats,alerts,events]=await Promise.all([
+      fetch('/api/stats').then(r=>r.json()),
+      fetch('/api/alerts').then(r=>r.json()),
+      fetch('/api/events?limit=150').then(r=>r.json()),
+    ]);
+    renderStats(stats);renderAlerts(alerts);renderEvents(events);
+    $('#updated').textContent='updated '+new Date().toLocaleTimeString();
+  }catch(e){$('#updated').textContent='connection error';}
+}
+setInterval(()=>{$('#clock').textContent=new Date().toLocaleTimeString();},1000);
+refresh();setInterval(refresh,15000);
+</script>
+</body>
+</html>
