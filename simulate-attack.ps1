@@ -1,9 +1,9 @@
-# Argus SIEM — Attack Simulator
+# Argus SIEM - Attack Simulator
 # Generates REAL Windows failed-logon events (4625) to validate the brute-force detection.
 # Uses a fake username so your real account is NEVER locked out.
 #
 # Usage:  .\simulate-attack.ps1
-# Then run the collector and refresh the dashboard — you'll see a HIGH-severity brute-force alert.
+# Then run the collector and refresh the dashboard - you'll see a HIGH-severity brute-force alert.
 
 $sig = @'
 [DllImport("advapi32.dll", SetLastError=true)]
@@ -16,8 +16,9 @@ Write-Host "Simulating a brute-force attack against fake account '$fake' (your r
 1..6 | ForEach-Object {
   [System.IntPtr]$tok = 0
   [void]$api::LogonUser($fake, $env:COMPUTERNAME, "WrongPass!$_", 2, 0, [ref]$tok)
-  Write-Host "  attempt $_/6 — failed logon (4625) generated"
+  Write-Host ("  attempt {0}/6 - failed logon (4625) generated" -f $_)
   Start-Sleep -Milliseconds 300
 }
-Write-Host "`nDone. Now run:  .\collector\collect.ps1   (as admin)  then refresh http://localhost:3001"
-Write-Host "Expected: HIGH-severity 'Brute-force logon attempt' alert mapped to MITRE T1110."
+Write-Host ""
+Write-Host "Done. Run the collector, then refresh http://localhost:3001"
+Write-Host "Expected: HIGH-severity brute-force alert mapped to MITRE T1110."
