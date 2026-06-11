@@ -1,4 +1,4 @@
-# Argus SIEM — Collector
+# Argus SIEM - Collector
 # Pulls SOC-relevant Windows Security events, normalizes them, appends to a JSONL event store.
 # Incremental by RecordId so each run only ingests new events.
 # NOTE: reading the Security log requires elevation (run as admin / scheduled task w/ highest privileges).

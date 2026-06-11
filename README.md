@@ -2,13 +2,13 @@
 
 A lightweight **Security Information and Event Management** system that monitors Windows Security logs, detects attacker behavior with rules mapped to **MITRE ATT&CK**, and surfaces alerts on a real-time dashboard.
 
-Built to demonstrate hands-on **SOC analyst** skills: log collection, normalization, detection engineering, alert tuning, and threat visualization — the daily work of a Security Operations Center.
+Built to demonstrate hands-on **SOC analyst** skills: log collection, normalization, detection engineering, alert tuning, and threat visualization - the daily work of a Security Operations Center.
 
-> Runs on real Windows Security Event Log data. Zero runtime dependencies — pure Node.js + PowerShell.
+> Runs on real Windows Security Event Log data. Zero runtime dependencies - pure Node.js + PowerShell.
 
 ![Argus SIEM dashboard detecting a simulated brute-force attack mapped to MITRE T1110](docs/dashboard.png)
 
-> *Argus catching a brute-force attack in real time — failed logons spiking, a HIGH-severity alert mapped to **MITRE T1110**, and live ATT&CK coverage. Validate it yourself with [`simulate-attack.ps1`](simulate-attack.ps1).*
+> *Argus catching a brute-force attack in real time - failed logons spiking, a HIGH-severity alert mapped to **MITRE T1110**, and live ATT&CK coverage. Validate it yourself with [`simulate-attack.ps1`](simulate-attack.ps1).*
 
 ---
 
@@ -25,9 +25,9 @@ Built to demonstrate hands-on **SOC analyst** skills: log collection, normalizat
  └──────────────────┘
 ```
 
-1. **Collect** — a PowerShell collector pulls SOC-relevant Security events (`Get-WinEvent`), normalizes them to a flat schema, and appends to an incremental JSONL event store.
-2. **Detect** — a Node detection engine runs 7 behavioral rules over the event stream, each mapped to a MITRE ATT&CK technique.
-3. **Alert & Visualize** — a real-time dashboard shows alerts (severity-ranked), MITRE coverage, event volume, and a live event feed.
+1. **Collect** - a PowerShell collector pulls SOC-relevant Security events (`Get-WinEvent`), normalizes them to a flat schema, and appends to an incremental JSONL event store.
+2. **Detect** - a Node detection engine runs 7 behavioral rules over the event stream, each mapped to a MITRE ATT&CK technique.
+3. **Alert & Visualize** - a real-time dashboard shows alerts (severity-ranked), MITRE coverage, event volume, and a live event feed.
 
 ---
 
@@ -41,17 +41,17 @@ Built to demonstrate hands-on **SOC analyst** skills: log collection, normalizat
 | New account created | Account creation (4720) | Medium | **T1136.001** Create Account |
 | Privileged session | Admin rights assigned (4672) to a real user | Low | **T1078.003** Valid Accounts |
 | Audit log cleared | Security log cleared (1102) | Critical | **T1070.001** Indicator Removal |
-| Off-hours logon | Interactive/RDP logon 02:00–06:00 | Low | **T1078** Valid Accounts |
+| Off-hours logon | Interactive/RDP logon 02:00-06:00 | Low | **T1078** Valid Accounts |
 
 ### Alert tuning (the SOC skill)
-Event `4672` fires constantly for `SYSTEM` and service/virtual accounts (`sshd_*`, GUID accounts, window manager). A naive rule produced **28 alerts** — almost all false positives. After filtering service/virtual accounts and **aggregating per account**, the same data produces **1 meaningful alert**. Reducing analyst alert fatigue is the core of detection engineering.
+Event `4672` fires constantly for `SYSTEM` and service/virtual accounts (`sshd_*`, GUID accounts, window manager). A naive rule produced **28 alerts** - almost all false positives. After filtering service/virtual accounts and **aggregating per account**, the same data produces **1 meaningful alert**. Reducing analyst alert fatigue is the core of detection engineering.
 
 ---
 
 ## Tech stack
 
 - **Collector:** Windows PowerShell (`Get-WinEvent`, XML event parsing, incremental state)
-- **Backend:** Node.js — raw `http` + `fs`, **zero dependencies**
+- **Backend:** Node.js - raw `http` + `fs`, **zero dependencies**
 - **Detection engine:** plain JS rules, each independently testable
 - **Dashboard:** vanilla JS, tactical HUD theme, auto-refresh
 - **Store:** append-only JSONL event log (SIEM-style)
@@ -61,7 +61,7 @@ Event `4672` fires constantly for `SYSTEM` and service/virtual accounts (`sshd_*
 ## Run it
 
 ```powershell
-# 1. Collect events (needs admin — Security log is privileged)
+# 1. Collect events (needs admin - Security log is privileged)
 .\collector\collect.ps1
 
 # 2. Start the dashboard
@@ -89,4 +89,4 @@ Auto-run is wired via two scheduled tasks: **Argus Collector** (every 5 min, ele
 
 ---
 
-*Privacy: the `data/` folder holds real Security log events from the host machine and is git-ignored — never published.*
+*Privacy: the `data/` folder holds real Security log events from the host machine and is git-ignored - never published.*

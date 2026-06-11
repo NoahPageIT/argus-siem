@@ -1,4 +1,4 @@
-// Argus SIEM — Server (zero dependencies: raw Node http + fs)
+// Argus SIEM - Server (zero dependencies: raw Node http + fs)
 // Reads the JSONL event store, runs the detection engine, serves the dashboard + JSON API.
 const http = require('http');
 const fs = require('fs');
@@ -45,7 +45,7 @@ function buildStats(events, alerts) {
     if (e.eventId === 4625 && e.user) targets[e.user] = (targets[e.user] || 0) + 1;
     if (e.sourceIp && e.sourceIp !== '-' && e.sourceIp !== '::1' && e.sourceIp !== '127.0.0.1') srcIps.add(e.sourceIp);
   }
-  // hourly volume — last 24h
+  // hourly volume - last 24h
   const now = Date.now(), hourly = [];
   for (let i = 23; i >= 0; i--) {
     const t0 = now - i * 3600000, t1 = t0 + 3600000;

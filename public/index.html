@@ -95,6 +95,7 @@ tr:hover td{background:var(--surface2)}
       <div class="title">Argus SIEM</div>
       <div class="subtitle">Windows Security Monitoring · MITRE ATT&CK</div>
     </div>
+    <a href="http://localhost:3000" style="margin-left:auto;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--teal);text-decoration:none;border:1px solid rgba(45,212,191,.4);background:rgba(45,212,191,.12);padding:7px 12px;border-radius:6px;white-space:nowrap">⌂ Command Center</a>
     <div class="top-right">
       <div class="clock" id="clock">--:--:--</div>
       <div class="updated" id="updated">loading…</div>
@@ -163,7 +164,7 @@ function renderStats(s){
 }
 function renderAlerts(a){
   $('#alert-n').textContent=a.length;
-  if(!a.length){$('#alerts').innerHTML='<div class="empty"><div class="big">✓</div>No active alerts — all clear</div>';return;}
+  if(!a.length){$('#alerts').innerHTML='<div class="empty"><div class="big">✓</div>No active alerts - all clear</div>';return;}
   $('#alerts').innerHTML=a.map(x=>`<div class="alert" style="border-left-color:${SEVC[x.severity]}">
     <div class="ah">
       <span class="sev" style="color:${SEVC[x.severity]};background:${SEVC[x.severity]}1e;border:1px solid ${SEVC[x.severity]}55">${x.severity}</span>
@@ -180,8 +181,8 @@ function renderEvents(ev){
     <td>${new Date(e.ts).toLocaleTimeString()}</td>
     <td><span class="eid" style="color:${EIDC[e.eventId]||'var(--muted)'};background:${(EIDC[e.eventId]||'var(--muted)')}1e">${e.eventId}</span></td>
     <td>${esc(e.eventName)}</td>
-    <td>${esc(e.user||e.subject||'—')}</td>
-    <td>${esc(e.sourceIp&&e.sourceIp!=='-'?e.sourceIp:(e.process?e.process.split('\\').pop():'—'))}</td>
+    <td>${esc(e.user||e.subject||'-')}</td>
+    <td>${esc(e.sourceIp&&e.sourceIp!=='-'?e.sourceIp:(e.process?e.process.split('\\').pop():'-'))}</td>
   </tr>`).join('');
 }
 async function refresh(){

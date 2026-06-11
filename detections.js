@@ -1,11 +1,11 @@
-// Argus SIEM — Detection Engine
+// Argus SIEM - Detection Engine
 // Each rule scans the normalized event stream and emits alerts, mapped to MITRE ATT&CK.
-// Rules are intentionally readable — this is the part a SOC interviewer will want to see.
+// Rules are intentionally readable - this is the part a SOC interviewer will want to see.
 
 const SEV = { critical: 4, high: 3, medium: 2, low: 1, info: 0 };
 
 // ── helpers ───────────────────────────────────────────────────────────────────
-// Service / virtual accounts that fire benign privilege events constantly — filtered to cut alert noise.
+// Service / virtual accounts that fire benign privilege events constantly - filtered to cut alert noise.
 const SERVICE_ACCT = /^(sshd_|DWM-|UMFD-|font|IUSR|defaultuser|MSSQL|NT |IIS |Window Manager)/i;
 const isGuid = u => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(u || '');
 const isSystemAcct = u =>
@@ -84,7 +84,7 @@ const RULES = [
     run(ev) {
       return ev.filter(e => e.eventId === 4740).map(e => ({
         title: `Account locked out: "${e.user}"`,
-        detail: `Account "${e.user}" was locked out (event 4740) — often the tail end of a brute-force attempt.`,
+        detail: `Account "${e.user}" was locked out (event 4740) - often the tail end of a brute-force attempt.`,
         entity: e.user, count: 1, events: [e.id], ts: e.ts,
       }));
     },
@@ -108,7 +108,7 @@ const RULES = [
     severity: 'low',
     mitre: { id: 'T1078.003', name: 'Valid Accounts: Local Accounts', tactic: 'Privilege Escalation' },
     run(ev) {
-      // 4672 fires constantly for SYSTEM/service accounts — surface only real (human) accounts,
+      // 4672 fires constantly for SYSTEM/service accounts - surface only real (human) accounts,
       // and aggregate per account so we get one tuned alert instead of dozens of duplicates.
       const real = ev.filter(e => e.eventId === 4672 && !isSystemAcct(e.subject));
       const byUser = {};
@@ -139,7 +139,7 @@ const RULES = [
     severity: 'low',
     mitre: { id: 'T1078', name: 'Valid Accounts', tactic: 'Initial Access' },
     run(ev) {
-      // interactive (2) or remote-interactive/RDP (10) logon between 02:00–06:00 local — aggregated per user
+      // interactive (2) or remote-interactive/RDP (10) logon between 02:00-06:00 local - aggregated per user
       const hits = ev.filter(e => {
         if (e.eventId !== 4624 || isSystemAcct(e.user)) return false;
         if (!['2', '10'].includes(String(e.logonType))) return false;
@@ -149,7 +149,7 @@ const RULES = [
       const byUser = {};
       for (const e of hits) (byUser[e.user] ||= []).push(e);
       return Object.entries(byUser).map(([u, evs]) => ({
-        title: `Off-hours logon: "${u}" (${evs.length}×, 02:00–06:00)`,
+        title: `Off-hours logon: "${u}" (${evs.length}×, 02:00-06:00)`,
         detail: `${evs.length} interactive logon(s) for "${u}" during off-hours. RDP/console access at unusual times warrants a glance.`,
         entity: u, count: evs.length, events: evs.map(e => e.id), ts: evs[evs.length - 1].ts,
       }));
