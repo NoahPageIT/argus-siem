@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const { detect, RULES } = require('./detections');
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 const STORE = path.join(__dirname, 'data', 'events.jsonl');
 const PUBLIC = path.join(__dirname, 'public');
 
