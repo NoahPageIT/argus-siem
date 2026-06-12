@@ -1,7 +1,1 @@
-{
-  "name": "argus-siem",
-  "version": "1.0.0",
-  "scripts": {
-    "start": "node server.js"
-  }
-}
+{"name":"argus-siem","version":"1.0.0","scripts":{"start":"node server.js"}}
